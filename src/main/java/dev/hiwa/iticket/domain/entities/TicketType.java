@@ -31,6 +31,8 @@ public class TicketType {
     @Column(nullable = false)
     private String name;
 
+    private String description;
+
     @Column(nullable = false)
     private Double price;
 
@@ -59,9 +61,11 @@ public class TicketType {
         TicketType that = (TicketType) o;
         return Objects.equals(getId(), that.getId()) && Objects.equals(getName(),
                                                                        that.getName()
-        ) && Objects.equals(getPrice(), that.getPrice()) && Objects.equals(
-                getTotalAvailable(),
-                that.getTotalAvailable()
+        ) && Objects.equals(getDescription(), that.getDescription()) && Objects.equals(
+                getPrice(),
+                that.getPrice()
+        ) && Objects.equals(getTotalAvailable(),
+                            that.getTotalAvailable()
         ) && Objects.equals(getCreatedAt(), that.getCreatedAt()) && Objects.equals(
                 getUpdatedAt(),
                 that.getUpdatedAt()
@@ -72,6 +76,7 @@ public class TicketType {
     public int hashCode() {
         return Objects.hash(getId(),
                             getName(),
+                            getDescription(),
                             getPrice(),
                             getTotalAvailable(),
                             getCreatedAt(),
@@ -79,3 +84,4 @@ public class TicketType {
         );
     }
 }
+

@@ -65,7 +65,10 @@ public class Ticket {
                               ticket.getId()
         ) && getTicketStatus() == ticket.getTicketStatus() && Objects.equals(getCreatedAt(),
                                                                              ticket.getCreatedAt()
-        ) && Objects.equals(getUpdatedAt(), ticket.getUpdatedAt());
+        ) && Objects.equals(
+                getUpdatedAt(),
+                ticket.getUpdatedAt()
+        );
     }
 
     @Override
