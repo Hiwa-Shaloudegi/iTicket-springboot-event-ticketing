@@ -2,18 +2,17 @@ package dev.hiwa.iticket.controller;
 
 import dev.hiwa.iticket.domain.dto.request.CreateEventRequest;
 import dev.hiwa.iticket.domain.dto.response.CreateEventResponse;
+import dev.hiwa.iticket.domain.dto.response.EventResponse;
 import dev.hiwa.iticket.service.EventService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -35,6 +34,17 @@ public class EventController {
         var createdEvent = eventService.createEvent(userId, request);
 
         return new ResponseEntity<>(createdEvent, HttpStatus.CREATED);
+    }
 
+    @GetMapping
+    public ResponseEntity<Page<EventResponse>> getAllEvents(
+            @AuthenticationPrincipal Jwt jwt,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "25") Integer size
+    ) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        var eventsPage = eventService.getAllEventsForOrganizer(userId, page, size);
+
+        return ResponseEntity.ok(eventsPage);
     }
 }

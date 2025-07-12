@@ -1,6 +1,7 @@
 package dev.hiwa.iticket.mappers;
 
 import dev.hiwa.iticket.domain.dto.request.CreateTicketTypeRequest;
+import dev.hiwa.iticket.domain.dto.response.TicketTypeResponse;
 import dev.hiwa.iticket.domain.entities.TicketType;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -10,4 +11,5 @@ public interface TicketTypeMapper {
 
     TicketType toEntity(CreateTicketTypeRequest createTicketTypeRequest);
 
+    TicketTypeResponse toTicketTypeResponse(TicketType ticketType);
 }

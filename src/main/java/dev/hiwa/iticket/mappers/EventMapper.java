@@ -2,6 +2,7 @@ package dev.hiwa.iticket.mappers;
 
 import dev.hiwa.iticket.domain.dto.request.CreateEventRequest;
 import dev.hiwa.iticket.domain.dto.response.CreateEventResponse;
+import dev.hiwa.iticket.domain.dto.response.EventResponse;
 import dev.hiwa.iticket.domain.entities.Event;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -12,5 +13,7 @@ public interface EventMapper {
 
     Event toEntity(CreateEventRequest createEventRequest);
 
-    CreateEventResponse toEventResponse(Event event);
+    CreateEventResponse toCreateEventResponse(Event event);
+
+    EventResponse toEventResponse(Event event);
 }
