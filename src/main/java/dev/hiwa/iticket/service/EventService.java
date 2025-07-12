@@ -34,6 +34,11 @@ public class EventService {
 
         event.setOrganizer(organizer);
 
+        // set eventId for each ticket type
+        if (event.getTicketTypes() != null) {
+            event.getTicketTypes().forEach(ticketType -> ticketType.setEvent(event));
+        }
+
         var savedEvent = eventRepository.save(event);
 
         return eventMapper.toCreateEventResponse(savedEvent);
