@@ -3,6 +3,7 @@ package dev.hiwa.iticket.controller;
 import dev.hiwa.iticket.domain.dto.request.CreateEventRequest;
 import dev.hiwa.iticket.domain.dto.response.CreateEventResponse;
 import dev.hiwa.iticket.service.EventService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/events")
+@SecurityRequirement(name = "Keycloak")
 public class EventController {
 
     private final EventService eventService;

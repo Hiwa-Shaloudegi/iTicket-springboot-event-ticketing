@@ -23,7 +23,6 @@ public class CreateEventResponse {
     private LocalDateTime salesStartsAt;
     private LocalDateTime salesEndsAt;
     private EventStatus eventStatus;
-    private User organizer; //TODO: use Dto?
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

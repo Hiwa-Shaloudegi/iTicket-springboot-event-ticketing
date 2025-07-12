@@ -129,6 +129,13 @@
             <version>0.12.5</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.keycloak/keycloak-admin-client -->
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>26.0.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
