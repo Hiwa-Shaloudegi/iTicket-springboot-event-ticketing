@@ -47,4 +47,15 @@ public class EventController {
 
         return ResponseEntity.ok(eventsPage);
     }
+
+    @GetMapping("{eventId}")
+    public ResponseEntity<EventResponse> getEvent(
+            @AuthenticationPrincipal Jwt jwt, @PathVariable(name = "eventId") UUID eventId
+    ) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+
+        return ResponseEntity.ok(eventService.getEvent(userId, eventId));
+    }
 }
+
+

@@ -57,4 +57,19 @@ public class EventService {
 
         return eventsPage.map(eventMapper::toEventResponse);
     }
+
+
+    @Transactional(readOnly = true)
+    public EventResponse getEvent(UUID organizerId, UUID eventId) {
+        userRepository
+                .findById(organizerId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", organizerId.toString()));
+
+        var event = eventRepository
+                .findWithTicketTypesByIdAndOrganizer_Id(eventId, organizerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event", "id", eventId.toString()));
+
+        return eventMapper.toEventResponse(event);
+
+    }
 }
