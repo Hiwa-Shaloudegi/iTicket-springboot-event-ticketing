@@ -76,96 +76,106 @@ public class EventService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", organizerId.toString()));
 
         var event = eventRepository
-                .findWithTicketTypesByIdAndOrganizer_Id(eventId, organizerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Event", "id", eventId.toString()));
+                .findByIdAndOrganizer_Id(eventId, organizerId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No such Event with id '%s' exists for Organizer with id '%s'".formatted(eventId,
+                                                                                                 organizerId
+                        )));
 
         return eventMapper.toEventResponse(event);
 
     }
 
-//    @Transactional
-//    public UpdateEventResponse updateEvent(UUID organizerId, UUID eventId, UpdateEventRequest request) {
-//        var eventToUpdate =
-//                eventRepository.findByIdAndOrganizer_Id(eventId, organizerId).orElseThrow(() -> {
-//                    String msg = String.format(
-//                            "No such Event with id '%s' exists for Organizer with id '%s'",
-//                            eventId,
-//                            organizerId
-//                    );
-//                    return new ResourceNotFoundException(msg);
-//                });
-//
-//        Set<UUID> incomingTicketTypeIds  = request
-//                .getTicketTypes()
-//                .stream()
-//                .map(UpdateTicketTypeRequest::getId)
-//                .collect(Collectors.toSet());
-//
-//        Set<TicketType> existingTicketTypes = ticketTypeRepository.findAllByIdIn(incomingTicketTypeIds);
-//        Map<UUID, TicketType> existingById =
-//                existingTicketTypes.stream().collect(Collectors.toMap(TicketType::getId, tt -> tt));
-//
-//        eventMapper.update(eventToUpdate, request);
-//
-//        // Update ticket types
-//        List<TicketType> updatedTicketTypes = new ArrayList<>();
-//
-//        for (UpdateTicketTypeRequest ticketReq : request.getTicketTypes()) {
-//            UUID ticketTypeId = ticketReq.getId();
-//            TicketType ticketType = existingById.get(ticketTypeId);
-//
-//            if (ticketType == null || !ticketType.getEvent().getId().equals(eventId)) {
-//                throw new ResourceNotFoundException("TicketType with ID " + ticketTypeId + " not found in this event");
-//            }
-//
-//            ticketType.setName(ticketReq.getName());
-//            ticketType.setDescription(ticketReq.getDescription());
-//            ticketType.setPrice(ticketReq.getPrice());
-//            ticketType.setTotalAvailable(ticketReq.getTotalAvailable());
-//
-//            updatedTicketTypes.add(ticketType);
-//        }
-//
-//        // Remove ticket types not included in the request
-//        eventToUpdate.getTicketTypes().removeIf(existing ->
-//                                                        updatedTicketTypes.stream().noneMatch(updated ->
-//                                                                                                      updated.getId().equals(existing.getId()))
-//        );
-//
-//        // Ensure all updated types are present (prevent detached state)
-//        for (TicketType updated : updatedTicketTypes) {
-//            if (!eventToUpdate.getTicketTypes().contains(updated)) {
-//                eventToUpdate.getTicketTypes().add(updated);
-//            }
-//        }
-//
-//
-//
-//        Event savedEvent = eventRepository.save(eventToUpdate);
-//
-//        return eventMapper.toUpdateEventResponse(savedEvent);
-//    }
+    //    @Transactional
+    //    public UpdateEventResponse updateEvent(UUID organizerId, UUID eventId, UpdateEventRequest
+    //    request) {
+    //        var eventToUpdate =
+    //                eventRepository.findByIdAndOrganizer_Id(eventId, organizerId).orElseThrow(() -> {
+    //                    String msg = String.format(
+    //                            "No such Event with id '%s' exists for Organizer with id '%s'",
+    //                            eventId,
+    //                            organizerId
+    //                    );
+    //                    return new ResourceNotFoundException(msg);
+    //                });
+    //
+    //        Set<UUID> incomingTicketTypeIds  = request
+    //                .getTicketTypes()
+    //                .stream()
+    //                .map(UpdateTicketTypeRequest::getId)
+    //                .collect(Collectors.toSet());
+    //
+    //        Set<TicketType> existingTicketTypes = ticketTypeRepository.findAllByIdIn
+    //        (incomingTicketTypeIds);
+    //        Map<UUID, TicketType> existingById =
+    //                existingTicketTypes.stream().collect(Collectors.toMap(TicketType::getId, tt ->
+    //                tt));
+    //
+    //        eventMapper.update(eventToUpdate, request);
+    //
+    //        // Update ticket types
+    //        List<TicketType> updatedTicketTypes = new ArrayList<>();
+    //
+    //        for (UpdateTicketTypeRequest ticketReq : request.getTicketTypes()) {
+    //            UUID ticketTypeId = ticketReq.getId();
+    //            TicketType ticketType = existingById.get(ticketTypeId);
+    //
+    //            if (ticketType == null || !ticketType.getEvent().getId().equals(eventId)) {
+    //                throw new ResourceNotFoundException("TicketType with ID " + ticketTypeId + " not
+    //                found in this event");
+    //            }
+    //
+    //            ticketType.setName(ticketReq.getName());
+    //            ticketType.setDescription(ticketReq.getDescription());
+    //            ticketType.setPrice(ticketReq.getPrice());
+    //            ticketType.setTotalAvailable(ticketReq.getTotalAvailable());
+    //
+    //            updatedTicketTypes.add(ticketType);
+    //        }
+    //
+    //        // Remove ticket types not included in the request
+    //        eventToUpdate.getTicketTypes().removeIf(existing ->
+    //                                                        updatedTicketTypes.stream().noneMatch
+    //                                                        (updated ->
+    //                                                                                                      updated.getId().equals(existing.getId()))
+    //        );
+    //
+    //        // Ensure all updated types are present (prevent detached state)
+    //        for (TicketType updated : updatedTicketTypes) {
+    //            if (!eventToUpdate.getTicketTypes().contains(updated)) {
+    //                eventToUpdate.getTicketTypes().add(updated);
+    //            }
+    //        }
+    //
+    //
+    //
+    //        Event savedEvent = eventRepository.save(eventToUpdate);
+    //
+    //        return eventMapper.toUpdateEventResponse(savedEvent);
+    //    }
 
     @Transactional
     public UpdateEventResponse updateEvent(UUID organizerId, UUID eventId, UpdateEventRequest request) {
         // Step 1: Load the existing event
-        Event eventToUpdate = eventRepository.findByIdAndOrganizer_Id(eventId, organizerId)
-                                             .orElseThrow(() -> new ResourceNotFoundException(
-                                                     "No such Event with id '%s' exists for Organizer with id '%s'"
-                                                             .formatted(eventId, organizerId)
-                                             ));
+        Event eventToUpdate = eventRepository
+                .findByIdAndOrganizer_Id(eventId, organizerId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No such Event with id '%s' exists for Organizer with id '%s'".formatted(eventId,
+                                                                                                 organizerId
+                        )));
 
         // Step 2: Extract TicketType IDs
-        Set<UUID> incomingTicketTypeIds = request.getTicketTypes().stream()
-                                                 .map(UpdateTicketTypeRequest::getId)
-                                                 .collect(Collectors.toSet());
+        Set<UUID> incomingTicketTypeIds = request
+                .getTicketTypes()
+                .stream()
+                .map(UpdateTicketTypeRequest::getId)
+                .collect(Collectors.toSet());
 
         Set<TicketType> existingTicketTypes = ticketTypeRepository.findAllByIdIn(incomingTicketTypeIds);
 
         if (existingTicketTypes.size() != incomingTicketTypeIds.size()) {
-            Set<UUID> foundIds = existingTicketTypes.stream()
-                                                    .map(TicketType::getId)
-                                                    .collect(Collectors.toSet());
+            Set<UUID> foundIds =
+                    existingTicketTypes.stream().map(TicketType::getId).collect(Collectors.toSet());
             Set<UUID> missingIds = new HashSet<>(incomingTicketTypeIds);
             missingIds.removeAll(foundIds);
 
@@ -173,8 +183,8 @@ public class EventService {
         }
 
         // Step 3: Map TicketType entities by ID
-        Map<UUID, TicketType> existingById = existingTicketTypes.stream()
-                                                                .collect(Collectors.toMap(TicketType::getId, tt -> tt));
+        Map<UUID, TicketType> existingById =
+                existingTicketTypes.stream().collect(Collectors.toMap(TicketType::getId, tt -> tt));
 
         // Step 4: Update scalar fields of Event
         eventMapper.update(eventToUpdate, request);
@@ -188,9 +198,10 @@ public class EventService {
 
             if (!ticketType.getEvent().getId().equals(eventId)) {
                 throw new ResourceNotFoundException(
-                        "TicketType with ID '%s' does not belong to Event with ID '%s'"
-                                .formatted(ticketTypeId, eventId)
-                );
+                        "TicketType with ID '%s' does not belong to Event with ID '%s'".formatted(
+                                ticketTypeId,
+                                eventId
+                        ));
             }
 
             ticketTypeMapper.update(ticketType, ticketReq);
@@ -206,4 +217,9 @@ public class EventService {
         return eventMapper.toUpdateEventResponse(savedEvent);
     }
 
+    @Transactional
+    public void deleteEvent(UUID organizerId, UUID eventId) {
+        getEvent(organizerId, eventId);
+        eventRepository.deleteById(eventId);
+    }
 }
