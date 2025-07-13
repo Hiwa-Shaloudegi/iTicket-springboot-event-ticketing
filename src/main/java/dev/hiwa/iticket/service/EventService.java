@@ -8,6 +8,7 @@ import dev.hiwa.iticket.domain.dto.response.EventResponse;
 import dev.hiwa.iticket.domain.dto.response.UpdateEventResponse;
 import dev.hiwa.iticket.domain.entities.Event;
 import dev.hiwa.iticket.domain.entities.TicketType;
+import dev.hiwa.iticket.domain.enums.EventStatus;
 import dev.hiwa.iticket.exceptions.ResourceNotFoundException;
 import dev.hiwa.iticket.mappers.EventMapper;
 import dev.hiwa.iticket.mappers.TicketTypeMapper;
@@ -68,7 +69,6 @@ public class EventService {
         return eventsPage.map(eventMapper::toEventResponse);
     }
 
-
     @Transactional(readOnly = true)
     public EventResponse getEvent(UUID organizerId, UUID eventId) {
         userRepository
@@ -85,74 +85,6 @@ public class EventService {
         return eventMapper.toEventResponse(event);
 
     }
-
-    //    @Transactional
-    //    public UpdateEventResponse updateEvent(UUID organizerId, UUID eventId, UpdateEventRequest
-    //    request) {
-    //        var eventToUpdate =
-    //                eventRepository.findByIdAndOrganizer_Id(eventId, organizerId).orElseThrow(() -> {
-    //                    String msg = String.format(
-    //                            "No such Event with id '%s' exists for Organizer with id '%s'",
-    //                            eventId,
-    //                            organizerId
-    //                    );
-    //                    return new ResourceNotFoundException(msg);
-    //                });
-    //
-    //        Set<UUID> incomingTicketTypeIds  = request
-    //                .getTicketTypes()
-    //                .stream()
-    //                .map(UpdateTicketTypeRequest::getId)
-    //                .collect(Collectors.toSet());
-    //
-    //        Set<TicketType> existingTicketTypes = ticketTypeRepository.findAllByIdIn
-    //        (incomingTicketTypeIds);
-    //        Map<UUID, TicketType> existingById =
-    //                existingTicketTypes.stream().collect(Collectors.toMap(TicketType::getId, tt ->
-    //                tt));
-    //
-    //        eventMapper.update(eventToUpdate, request);
-    //
-    //        // Update ticket types
-    //        List<TicketType> updatedTicketTypes = new ArrayList<>();
-    //
-    //        for (UpdateTicketTypeRequest ticketReq : request.getTicketTypes()) {
-    //            UUID ticketTypeId = ticketReq.getId();
-    //            TicketType ticketType = existingById.get(ticketTypeId);
-    //
-    //            if (ticketType == null || !ticketType.getEvent().getId().equals(eventId)) {
-    //                throw new ResourceNotFoundException("TicketType with ID " + ticketTypeId + " not
-    //                found in this event");
-    //            }
-    //
-    //            ticketType.setName(ticketReq.getName());
-    //            ticketType.setDescription(ticketReq.getDescription());
-    //            ticketType.setPrice(ticketReq.getPrice());
-    //            ticketType.setTotalAvailable(ticketReq.getTotalAvailable());
-    //
-    //            updatedTicketTypes.add(ticketType);
-    //        }
-    //
-    //        // Remove ticket types not included in the request
-    //        eventToUpdate.getTicketTypes().removeIf(existing ->
-    //                                                        updatedTicketTypes.stream().noneMatch
-    //                                                        (updated ->
-    //                                                                                                      updated.getId().equals(existing.getId()))
-    //        );
-    //
-    //        // Ensure all updated types are present (prevent detached state)
-    //        for (TicketType updated : updatedTicketTypes) {
-    //            if (!eventToUpdate.getTicketTypes().contains(updated)) {
-    //                eventToUpdate.getTicketTypes().add(updated);
-    //            }
-    //        }
-    //
-    //
-    //
-    //        Event savedEvent = eventRepository.save(eventToUpdate);
-    //
-    //        return eventMapper.toUpdateEventResponse(savedEvent);
-    //    }
 
     @Transactional
     public UpdateEventResponse updateEvent(UUID organizerId, UUID eventId, UpdateEventRequest request) {
@@ -221,5 +153,15 @@ public class EventService {
     public void deleteEvent(UUID organizerId, UUID eventId) {
         getEvent(organizerId, eventId);
         eventRepository.deleteById(eventId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<EventResponse> getPublishedEvents(Integer page, Integer size) {
+        var pageRequest = PageRequest.of(page, size);
+
+        Page<Event> eventsPage =
+                eventRepository.findAllWithTicketTypesByEventStatus(EventStatus.PUBLISHED, pageRequest);
+
+        return eventsPage.map(eventMapper::toEventResponse);
     }
 }

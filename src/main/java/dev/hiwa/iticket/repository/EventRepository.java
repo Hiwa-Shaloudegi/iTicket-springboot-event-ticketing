@@ -1,6 +1,7 @@
 package dev.hiwa.iticket.repository;
 
 import dev.hiwa.iticket.domain.entities.Event;
+import dev.hiwa.iticket.domain.enums.EventStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -20,4 +21,9 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     Optional<Event> findWithTicketTypesByIdAndOrganizer_Id(UUID id, UUID organizerId);
 
     Optional<Event> findByIdAndOrganizer_Id(UUID id, UUID organizerId);
+
+
+    @EntityGraph(attributePaths = {"ticketTypes"})
+    Page<Event> findAllWithTicketTypesByEventStatus(EventStatus eventStatus, Pageable pageable);
+
 }
