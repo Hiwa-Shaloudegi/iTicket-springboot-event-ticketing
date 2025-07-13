@@ -4,7 +4,11 @@ import dev.hiwa.iticket.domain.entities.TicketType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
-public interface TicketTypeRepository extends JpaRepository<TicketType, UUID> {}
+public interface TicketTypeRepository extends JpaRepository<TicketType, UUID> {
+
+    Set<TicketType> findAllByIdIn(Set<UUID> ids);
+}

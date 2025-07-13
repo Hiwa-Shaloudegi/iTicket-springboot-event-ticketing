@@ -18,4 +18,6 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     @EntityGraph(attributePaths = {"ticketTypes"})
     Optional<Event> findWithTicketTypesByIdAndOrganizer_Id(UUID id, UUID organizerId);
+
+    Optional<Event> findByIdAndOrganizer_Id(UUID id, UUID organizerId);
 }

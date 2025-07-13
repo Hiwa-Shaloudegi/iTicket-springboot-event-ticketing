@@ -1,8 +1,10 @@
 package dev.hiwa.iticket.controller;
 
 import dev.hiwa.iticket.domain.dto.request.CreateEventRequest;
+import dev.hiwa.iticket.domain.dto.request.UpdateEventRequest;
 import dev.hiwa.iticket.domain.dto.response.CreateEventResponse;
 import dev.hiwa.iticket.domain.dto.response.EventResponse;
+import dev.hiwa.iticket.domain.dto.response.UpdateEventResponse;
 import dev.hiwa.iticket.service.EventService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -48,13 +50,26 @@ public class EventController {
         return ResponseEntity.ok(eventsPage);
     }
 
-    @GetMapping("{eventId}")
+    @GetMapping("/{eventId}")
     public ResponseEntity<EventResponse> getEvent(
             @AuthenticationPrincipal Jwt jwt, @PathVariable(name = "eventId") UUID eventId
     ) {
         UUID userId = UUID.fromString(jwt.getSubject());
 
         return ResponseEntity.ok(eventService.getEvent(userId, eventId));
+    }
+
+
+    @PutMapping("/{eventId}")
+    public ResponseEntity<UpdateEventResponse> updateEvent(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable("eventId") UUID eventId,
+            @Valid @RequestBody UpdateEventRequest request
+    ) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        var response = eventService.updateEvent(userId, eventId, request);
+
+        return ResponseEntity.ok(response);
     }
 }
 
