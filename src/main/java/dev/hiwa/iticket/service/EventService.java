@@ -5,6 +5,7 @@ import dev.hiwa.iticket.domain.dto.request.UpdateEventRequest;
 import dev.hiwa.iticket.domain.dto.request.UpdateTicketTypeRequest;
 import dev.hiwa.iticket.domain.dto.response.CreateEventResponse;
 import dev.hiwa.iticket.domain.dto.response.EventResponse;
+import dev.hiwa.iticket.domain.dto.response.GetPublishedEventDetailsResponse;
 import dev.hiwa.iticket.domain.dto.response.UpdateEventResponse;
 import dev.hiwa.iticket.domain.entities.Event;
 import dev.hiwa.iticket.domain.entities.TicketType;
@@ -169,5 +170,12 @@ public class EventService {
         return searchedEvents.map(eventMapper::toEventResponse);
     }
 
+    @Transactional(readOnly = true)
+    public GetPublishedEventDetailsResponse getPublishedEvent(UUID eventId) {
+        Event event = eventRepository
+                .findWithTicketTypesByIdAndEventStatus(eventId, EventStatus.PUBLISHED)
+                .orElseThrow(() -> new ResourceNotFoundException("Event", "id", eventId.toString()));
 
+        return eventMapper.toGetPublishedEventResponse(event);
+    }
 }

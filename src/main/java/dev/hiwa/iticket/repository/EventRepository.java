@@ -34,4 +34,8 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
              LOWER(e.venue) LIKE LOWER(CONCAT('%', :query, '%')))
             """)
     Page<Event> searchPublishedEventsByNameOrVenue(@Param("query") String query, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"ticketTypes"})
+    Optional<Event> findWithTicketTypesByIdAndEventStatus(UUID id, EventStatus status);
+
 }

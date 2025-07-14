@@ -4,6 +4,7 @@ import dev.hiwa.iticket.domain.dto.request.CreateEventRequest;
 import dev.hiwa.iticket.domain.dto.request.UpdateEventRequest;
 import dev.hiwa.iticket.domain.dto.response.CreateEventResponse;
 import dev.hiwa.iticket.domain.dto.response.EventResponse;
+import dev.hiwa.iticket.domain.dto.response.GetPublishedEventDetailsResponse;
 import dev.hiwa.iticket.domain.dto.response.UpdateEventResponse;
 import dev.hiwa.iticket.service.EventService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -59,7 +60,6 @@ public class EventController {
         return ResponseEntity.ok(eventService.getEvent(userId, eventId));
     }
 
-
     @PutMapping("/{eventId}")
     public ResponseEntity<UpdateEventResponse> updateEvent(
             @AuthenticationPrincipal Jwt jwt,
@@ -83,7 +83,7 @@ public class EventController {
     }
 
     @GetMapping("/published")
-    public ResponseEntity<Page<EventResponse>> getPublishedEvents(
+    public ResponseEntity<Page<EventResponse>> getAllPublishedEvents(
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "25") Integer size,
             @RequestParam(name = "q", required = false) String query
@@ -95,6 +95,12 @@ public class EventController {
         return ResponseEntity.ok(eventsPage);
     }
 
+    @GetMapping("/published/{id}")
+    public ResponseEntity<GetPublishedEventDetailsResponse> getPublishedEvent(
+            @PathVariable("id") UUID id
+    ) {
+        return ResponseEntity.ok(eventService.getPublishedEvent(id));
+    }
 }
 
 
