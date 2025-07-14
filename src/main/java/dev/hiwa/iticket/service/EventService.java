@@ -157,4 +157,17 @@ public class EventService {
 
         return eventsPage.map(eventMapper::toEventResponse);
     }
+
+
+    @Transactional(readOnly = true)
+    public Page<EventResponse> searchPublishedEvents(String query, Integer page, Integer size) {
+        var pageRequest = PageRequest.of(page, size);
+
+        Page<Event> searchedEvents =
+                eventRepository.searchPublishedEventsByNameOrVenue(query, pageRequest);
+
+        return searchedEvents.map(eventMapper::toEventResponse);
+    }
+
+
 }

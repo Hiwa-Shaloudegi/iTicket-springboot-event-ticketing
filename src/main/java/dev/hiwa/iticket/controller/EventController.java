@@ -6,7 +6,6 @@ import dev.hiwa.iticket.domain.dto.response.CreateEventResponse;
 import dev.hiwa.iticket.domain.dto.response.EventResponse;
 import dev.hiwa.iticket.domain.dto.response.UpdateEventResponse;
 import dev.hiwa.iticket.service.EventService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -86,9 +85,12 @@ public class EventController {
     @GetMapping("/published")
     public ResponseEntity<Page<EventResponse>> getPublishedEvents(
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
-            @RequestParam(name = "size", required = false, defaultValue = "25") Integer size
+            @RequestParam(name = "size", required = false, defaultValue = "25") Integer size,
+            @RequestParam(name = "q", required = false) String query
     ) {
-        var eventsPage = eventService.getPublishedEvents(page, size);
+        var eventsPage = query == null
+                ? eventService.getPublishedEvents(page, size)
+                : eventService.searchPublishedEvents(query.trim(), page, size);
 
         return ResponseEntity.ok(eventsPage);
     }
