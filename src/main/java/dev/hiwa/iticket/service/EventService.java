@@ -42,16 +42,9 @@ public class EventService {
                 .findById(organizerId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", organizerId.toString()));
         var event = eventMapper.toEntity(request);
-
         event.setOrganizer(organizer);
 
-        // set eventId for each ticket type
-        if (event.getTicketTypes() != null) {
-            event.getTicketTypes().forEach(ticketType -> ticketType.setEvent(event));
-        }
-
         var savedEvent = eventRepository.save(event);
-
         return eventMapper.toCreateEventResponse(savedEvent);
     }
 

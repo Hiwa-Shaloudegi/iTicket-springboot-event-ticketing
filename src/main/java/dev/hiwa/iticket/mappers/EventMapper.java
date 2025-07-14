@@ -6,10 +6,7 @@ import dev.hiwa.iticket.domain.dto.response.CreateEventResponse;
 import dev.hiwa.iticket.domain.dto.response.EventResponse;
 import dev.hiwa.iticket.domain.dto.response.UpdateEventResponse;
 import dev.hiwa.iticket.domain.entities.Event;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 @Mapper(
         componentModel = "spring",
@@ -30,4 +27,9 @@ public interface EventMapper {
     EventResponse toEventResponse(Event event);
 
     void update(@MappingTarget Event event, UpdateEventRequest request);
+
+    @AfterMapping
+    default void afterMappingToEntity(@MappingTarget Event event) {
+        event.getTicketTypes().forEach(tt -> tt.setEvent(event));
+    }
 }
