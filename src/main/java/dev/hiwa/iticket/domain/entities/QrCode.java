@@ -21,14 +21,13 @@ import java.util.UUID;
 public class QrCode {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private QrCodeStatus status;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String value;
 
     @ManyToOne
