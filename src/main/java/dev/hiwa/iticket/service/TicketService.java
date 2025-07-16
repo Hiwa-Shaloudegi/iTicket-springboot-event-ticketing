@@ -1,8 +1,9 @@
 package dev.hiwa.iticket.service;
 
 import dev.hiwa.iticket.domain.dto.request.PurchaseTicketRequest;
+import dev.hiwa.iticket.domain.dto.response.GetAllTickets_TicketResponse;
+import dev.hiwa.iticket.domain.dto.response.GetTicketForUser_TicketResponse;
 import dev.hiwa.iticket.domain.dto.response.PurchaseTicketResponse;
-import dev.hiwa.iticket.domain.dto.response.TicketResponse;
 import dev.hiwa.iticket.domain.entities.Ticket;
 import dev.hiwa.iticket.domain.entities.TicketType;
 import dev.hiwa.iticket.domain.entities.User;
@@ -71,11 +72,23 @@ public class TicketService {
 
 
     @Transactional(readOnly = true)
-    public Page<TicketResponse> getAllUserTickets(UUID userId, Integer page, Integer size) {
+    public Page<GetAllTickets_TicketResponse> getAllUserTickets(
+            UUID userId, Integer page, Integer size
+    ) {
         var pageRequest = PageRequest.of(page, size);
 
         Page<Ticket> userTickets = ticketRepository.findAllByBuyer_Id(userId, pageRequest);
 
-        return userTickets.map(ticketMapper::toTicketResponse);
+        return userTickets.map(ticketMapper::toGetAllTickets_TicketResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public GetTicketForUser_TicketResponse getTicketForUser(UUID userId, UUID id) {
+        Ticket ticket = ticketRepository.findByIdAndBuyer_Id(id, userId).orElseThrow(() -> {
+            String msg = String.format("No ticket with id %s found for user with id %s", id, userId);
+            return new ResourceNotFoundException(msg);
+        });
+
+        return ticketMapper.toGetTicketForUser_TicketResponse(ticket);
     }
 }

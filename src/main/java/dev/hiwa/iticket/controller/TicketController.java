@@ -1,8 +1,9 @@
 package dev.hiwa.iticket.controller;
 
 import dev.hiwa.iticket.domain.dto.request.PurchaseTicketRequest;
+import dev.hiwa.iticket.domain.dto.response.GetAllTickets_TicketResponse;
+import dev.hiwa.iticket.domain.dto.response.GetTicketForUser_TicketResponse;
 import dev.hiwa.iticket.domain.dto.response.PurchaseTicketResponse;
-import dev.hiwa.iticket.domain.dto.response.TicketResponse;
 import dev.hiwa.iticket.service.TicketService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -33,7 +34,7 @@ public class TicketController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<TicketResponse>> getAllUserTickets(
+    public ResponseEntity<Page<GetAllTickets_TicketResponse>> getAllUserTickets(
             @AuthenticationPrincipal Jwt jwt,
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "25") Integer size
@@ -41,5 +42,14 @@ public class TicketController {
         UUID userId = UUID.fromString(jwt.getSubject());
 
         return ResponseEntity.ok(ticketService.getAllUserTickets(userId, page, size));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<GetTicketForUser_TicketResponse> getTicket(
+            @AuthenticationPrincipal Jwt jwt, @PathVariable("id") UUID id
+    ) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+
+        return ResponseEntity.ok(ticketService.getTicketForUser(userId, id));
     }
 }

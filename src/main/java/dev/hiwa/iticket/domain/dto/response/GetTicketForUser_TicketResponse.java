@@ -11,10 +11,15 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TicketResponse {
+public class GetTicketForUser_TicketResponse {
 
     private UUID id;
     private TicketStatus ticketStatus;
-    private GetAllTickets_TicketTypeResponse ticketType;
-    private LocalDateTime createdAt;
+    private Double price;
+    private String description;
+    private String eventName;
+    private String eventVenue;
+    private LocalDateTime eventStartsAt;
+    private LocalDateTime eventEndsAt;
+
 }
