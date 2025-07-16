@@ -29,6 +29,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/events/published/**").permitAll()
+                        .requestMatchers("/api/v1/events/**").hasRole("ORGANIZER")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(
                         configurer -> configurer.jwtAuthenticationConverter(jwtAuthenticationConverter)))
