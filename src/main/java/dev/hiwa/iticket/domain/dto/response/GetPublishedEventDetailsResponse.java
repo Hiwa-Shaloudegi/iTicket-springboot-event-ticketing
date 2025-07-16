@@ -18,5 +18,5 @@ public class GetPublishedEventDetailsResponse {
     private LocalDateTime startsAt;
     private LocalDateTime endsAt;
     private String venue;
-    private List<GetPublishedEventDetailsTicketTypeResponse> ticketTypes = new ArrayList<>();
+    private List<GetPublishedEventDetails_TicketTypeResponse> ticketTypes = new ArrayList<>();
 }

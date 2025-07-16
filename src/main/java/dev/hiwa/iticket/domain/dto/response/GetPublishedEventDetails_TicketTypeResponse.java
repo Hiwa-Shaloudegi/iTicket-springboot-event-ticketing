@@ -9,8 +9,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PurchaseTicketTypeResponse {
-
+public class GetPublishedEventDetails_TicketTypeResponse {
     private UUID id;
     private String name;
     private String description;

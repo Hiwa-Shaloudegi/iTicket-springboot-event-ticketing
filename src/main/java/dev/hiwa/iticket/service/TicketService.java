@@ -2,7 +2,7 @@ package dev.hiwa.iticket.service;
 
 import dev.hiwa.iticket.domain.dto.request.PurchaseTicketRequest;
 import dev.hiwa.iticket.domain.dto.response.PurchaseTicketResponse;
-import dev.hiwa.iticket.domain.dto.response.QrCodeResponse;
+import dev.hiwa.iticket.domain.dto.response.TicketResponse;
 import dev.hiwa.iticket.domain.entities.Ticket;
 import dev.hiwa.iticket.domain.entities.TicketType;
 import dev.hiwa.iticket.domain.entities.User;
@@ -14,10 +14,12 @@ import dev.hiwa.iticket.repository.TicketRepository;
 import dev.hiwa.iticket.repository.TicketTypeRepository;
 import dev.hiwa.iticket.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -46,10 +48,10 @@ public class TicketService {
                                                                  request.getTicketTypeId().toString()
                 ));
 
-        int purchasedTicketsCount = ticketRepository.countByTicketStatusAndTicketType_Id(
-                TicketStatus.PURCHASED,
-                request.getTicketTypeId()
-        );
+        int purchasedTicketsCount =
+                ticketRepository.countByTicketStatusAndTicketType_Id(TicketStatus.PURCHASED,
+                                                                     request.getTicketTypeId()
+                );
         if (ticketType.getTotalAvailable() - purchasedTicketsCount <= 0) {
             throw new TicketSoldOutException();
         }
@@ -67,4 +69,13 @@ public class TicketService {
         return ticketMapper.toPurchaseTicketResponse(ticketRepository.save(savedTicket));
     }
 
+
+    @Transactional(readOnly = true)
+    public Page<TicketResponse> getAllUserTickets(UUID userId, Integer page, Integer size) {
+        var pageRequest = PageRequest.of(page, size);
+
+        Page<Ticket> userTickets = ticketRepository.findAllByBuyer_Id(userId, pageRequest);
+
+        return userTickets.map(ticketMapper::toTicketResponse);
+    }
 }

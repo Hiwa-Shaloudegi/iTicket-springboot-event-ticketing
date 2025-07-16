@@ -2,8 +2,9 @@ package dev.hiwa.iticket.mappers;
 
 import dev.hiwa.iticket.domain.dto.request.CreateTicketTypeRequest;
 import dev.hiwa.iticket.domain.dto.request.UpdateTicketTypeRequest;
-import dev.hiwa.iticket.domain.dto.response.GetPublishedEventDetailsTicketTypeResponse;
-import dev.hiwa.iticket.domain.dto.response.PurchaseTicketTypeResponse;
+import dev.hiwa.iticket.domain.dto.response.GetAllTickets_TicketTypeResponse;
+import dev.hiwa.iticket.domain.dto.response.GetPublishedEventDetails_TicketTypeResponse;
+import dev.hiwa.iticket.domain.dto.response.PurchaseTicket_TicketTypeResponse;
 import dev.hiwa.iticket.domain.dto.response.TicketTypeResponse;
 import dev.hiwa.iticket.domain.entities.TicketType;
 import org.mapstruct.Mapper;
@@ -18,9 +19,11 @@ public interface TicketTypeMapper {
 
     TicketTypeResponse toTicketTypeResponse(TicketType ticketType);
 
-    GetPublishedEventDetailsTicketTypeResponse toGetPublishedEventDetailsTicketTypeResponse(TicketType ticketType);
+    GetPublishedEventDetails_TicketTypeResponse toGetPublishedEventDetailsTicketTypeResponse(TicketType ticketType);
 
-    PurchaseTicketTypeResponse toPurchaseTicketTypeResponse(TicketType ticketType);
+    PurchaseTicket_TicketTypeResponse toPurchaseTicketTypeResponse(TicketType ticketType);
+
+    GetAllTickets_TicketTypeResponse toGetAllTickets_TicketTypeResponse(TicketType ticketType);
 
     void update(@MappingTarget TicketType ticketType, UpdateTicketTypeRequest request);
 

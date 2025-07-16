@@ -9,9 +9,10 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PurchaseTicketResponse {
+public class PurchaseTicket_TicketTypeResponse {
 
     private UUID id;
-    private PurchaseTicket_TicketTypeResponse ticketType;
-    private QrCodeResponse qrCode;
+    private String name;
+    private String description;
+    private Double price;
 }
