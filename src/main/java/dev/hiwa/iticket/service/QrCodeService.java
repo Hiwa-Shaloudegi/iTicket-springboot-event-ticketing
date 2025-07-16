@@ -5,14 +5,15 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import dev.hiwa.iticket.domain.dto.response.QrCodeResponse;
 import dev.hiwa.iticket.domain.entities.QrCode;
 import dev.hiwa.iticket.domain.entities.Ticket;
 import dev.hiwa.iticket.domain.enums.QrCodeStatus;
 import dev.hiwa.iticket.exceptions.QrCodeGenerationException;
+import dev.hiwa.iticket.exceptions.ResourceNotFoundException;
 import dev.hiwa.iticket.mappers.QrCodeMapper;
 import dev.hiwa.iticket.repository.QrCodeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class QrCodeService {
@@ -50,6 +52,20 @@ public class QrCodeService {
         } catch (WriterException | IOException ex) {
             throw new QrCodeGenerationException(ex.getMessage());
         }
+    }
+
+    public byte[] getQrCodeImageForTicket(UUID userId, UUID ticketId) {
+        QrCode qrCode = qrCodeRepository
+                .findByTicket_IdAndTicket_Buyer_Id(ticketId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("QR Code Not found"));
+
+        try {
+            return Base64.getDecoder().decode(qrCode.getValue());
+        } catch (IllegalArgumentException ex) {
+            log.error("Invalid base64 QR Code for ticket ID: {}", ticketId, ex);
+            throw new ResourceNotFoundException("QR Code Not found");
+        }
+
     }
 
     private String _generateQrCoedImage(UUID uuid) throws WriterException, IOException {

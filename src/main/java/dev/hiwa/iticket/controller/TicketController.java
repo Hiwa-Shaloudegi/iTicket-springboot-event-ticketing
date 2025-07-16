@@ -4,11 +4,14 @@ import dev.hiwa.iticket.domain.dto.request.PurchaseTicketRequest;
 import dev.hiwa.iticket.domain.dto.response.GetAllTickets_TicketResponse;
 import dev.hiwa.iticket.domain.dto.response.GetTicketForUser_TicketResponse;
 import dev.hiwa.iticket.domain.dto.response.PurchaseTicketResponse;
+import dev.hiwa.iticket.service.QrCodeService;
 import dev.hiwa.iticket.service.TicketService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -23,6 +26,7 @@ import java.util.UUID;
 public class TicketController {
 
     private final TicketService ticketService;
+    private final QrCodeService qrCodeService;
 
     @PostMapping("/purchase")
     public ResponseEntity<PurchaseTicketResponse> purchaseTicket(
@@ -51,5 +55,20 @@ public class TicketController {
         UUID userId = UUID.fromString(jwt.getSubject());
 
         return ResponseEntity.ok(ticketService.getTicketForUser(userId, id));
+    }
+
+    @GetMapping("/{id}/qr-codes")
+    public ResponseEntity<byte[]> getTicketQrCode(
+            @AuthenticationPrincipal Jwt jwt, @PathVariable("id") UUID id
+    ) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+
+        byte[] qrCode = qrCodeService.getQrCodeImageForTicket(userId, id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+        headers.setContentLength(qrCode.length);
+
+        return ResponseEntity.ok().headers(headers).body(qrCode);
     }
 }
