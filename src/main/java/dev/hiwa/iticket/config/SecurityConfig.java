@@ -30,6 +30,7 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/events/published/**").permitAll()
                         .requestMatchers("/api/v1/events/**").hasRole("ORGANIZER")
+                        .requestMatchers("/api/v1/ticket-validations/**").hasRole("STAFF")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(
                         configurer -> configurer.jwtAuthenticationConverter(jwtAuthenticationConverter)))
