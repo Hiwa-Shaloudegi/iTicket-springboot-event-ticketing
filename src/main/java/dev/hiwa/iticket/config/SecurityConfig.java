@@ -4,7 +4,6 @@ import dev.hiwa.iticket.filters.UserProvisioningFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,7 +17,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(
-            HttpSecurity http, UserProvisioningFilter userProvisioningFilter
+            HttpSecurity http,
+            UserProvisioningFilter userProvisioningFilter,
+            JwtAuthenticationConverter jwtAuthenticationConverter
     ) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -27,9 +28,10 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/events/published/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/events/published/**").permitAll()
                         .anyRequest().authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(
+                        configurer -> configurer.jwtAuthenticationConverter(jwtAuthenticationConverter)))
                 .addFilterAfter(userProvisioningFilter, BearerTokenAuthenticationFilter.class);
 
         return http.build();
