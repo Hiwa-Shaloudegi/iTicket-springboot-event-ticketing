@@ -1,20 +1,18 @@
 package dev.hiwa.iticket.domain.dto.response;
 
-import dev.hiwa.iticket.domain.enums.QrCodeStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class QrCodeResponse {
+public class PurchaseTicketTypeResponse {
 
     private UUID id;
-    private String value;
-    private QrCodeStatus status;
-
+    private String name;
+    private String description;
+    private Double price;
 }

@@ -34,7 +34,7 @@ public class QrCodeService {
 
     private final QRCodeWriter qrCodeWriter;
 
-    public QrCodeResponse generateQrCodeFor(Ticket ticket) {
+    public QrCode generateQrCodeFor(Ticket ticket) {
         try {
             UUID qrId = UUID.randomUUID();
             String qrCoedImage = _generateQrCoedImage(qrId);
@@ -45,9 +45,7 @@ public class QrCodeService {
             qrCode.setStatus(QrCodeStatus.ACTIVE);
             qrCode.setTicket(ticket);
 
-            QrCode savedQrCode = qrCodeRepository.saveAndFlush(qrCode);
-
-            return qrCodeMapper.toQrCodeResponse(savedQrCode);
+            return qrCodeRepository.saveAndFlush(qrCode);
 
         } catch (WriterException | IOException ex) {
             throw new QrCodeGenerationException(ex.getMessage());

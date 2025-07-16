@@ -3,9 +3,7 @@ package dev.hiwa.iticket.controller;
 
 import dev.hiwa.iticket.domain.dto.response.ApiErrorResponse;
 import dev.hiwa.iticket.domain.dto.response.ApiValidationErrorResponse;
-import dev.hiwa.iticket.exceptions.ResourceAlreadyExistsException;
-import dev.hiwa.iticket.exceptions.ResourceConstraintViolationException;
-import dev.hiwa.iticket.exceptions.ResourceNotFoundException;
+import dev.hiwa.iticket.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +11,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -90,5 +87,29 @@ public class GlobalExceptionHandler {
                 new ApiErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Incorrect username or password");
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiErrorResponse);
+    }
+
+    @ExceptionHandler(QrCodeGenerationException.class)
+    public ResponseEntity<ApiErrorResponse> handleQrCodeGenerationException(
+            AuthenticationException ex
+    ) {
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Failed to generate QR code "
+        );
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiErrorResponse);
+    }
+
+    @ExceptionHandler(TicketSoldOutException.class)
+    public ResponseEntity<ApiErrorResponse> handleTicketSoldOutException(
+            AuthenticationException ex
+    ) {
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Tickets are sold out for this ticket type"
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiErrorResponse);
     }
 }
