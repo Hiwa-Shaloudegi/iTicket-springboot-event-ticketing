@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @SecurityScheme(
         name = "Keycloak",
-        openIdConnectUrl = "http://localhost:9090/realms/event-ticket-platform/.well-known/openid-configuration",
+        openIdConnectUrl = "http://localhost:9191/realms/event-ticket-platform/.well-known/openid-configuration",
         scheme = "bearer",
         type = SecuritySchemeType.OPENIDCONNECT,
         in = SecuritySchemeIn.HEADER
