@@ -2,7 +2,7 @@
 
 An Event Ticketing REST API built with Spring Boot, Keycloak, and Spring Security.  
 It supports event publishing, ticket purchasing, QR code generation, and validation — all accessible via Swagger UI.
-
+> 📌 **Note**: This project is based on a task brief from [Devtiro](https://www.youtube.com/@devtiro). I've implemented my own version with some changes and improvements.
 ---
 
 ## 🚀 Features
